@@ -13,6 +13,21 @@ type cliCommand struct {
 	callback    func() error
 }
 
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    displayHelp,
+		},
+	}
+}
+
 func cleanInput(text string) []string {
 	var output []string
 	rawSplits := strings.Fields(text)
@@ -30,15 +45,20 @@ func commandExit() error {
 	return nil
 }
 
-func main() {
-	cliCommands := map[string]cliCommand{
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
+func displayHelp() error {
+	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("Usage:")
+	fmt.Println()
+
+	cliCommands := getCommands()
+	for _, v := range cliCommands {
+		fmt.Printf("%s: %s\n", v.name, v.description)
 	}
 
+	return nil
+}
+
+func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -47,6 +67,7 @@ func main() {
 		input := cleanInput(scanner.Text())
 		command := input[0]
 
+		cliCommands := getCommands()
 		cliCommand, ok := cliCommands[command]
 		if !ok {
 			fmt.Println("Unknown command")
