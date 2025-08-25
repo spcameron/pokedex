@@ -21,7 +21,7 @@ func TestCleanInput(t *testing.T) {
 		actual := cleanInput(c.input)
 		if len(actual) != len(c.expected) {
 			t.Errorf("Expected: length %d, Actual: length %d", len(c.expected), len(actual))
-			t.Fail()
+			continue
 		}
 
 		for i := range actual {
@@ -29,7 +29,6 @@ func TestCleanInput(t *testing.T) {
 			expectedWord := c.expected[i]
 			if word != expectedWord {
 				t.Errorf("Expected: %s, Actual: %s", expectedWord, word)
-				t.Fail()
 			}
 		}
 	}
