@@ -81,6 +81,11 @@ func getCommands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
+		"inspect": {
+			name:        "inspect <pokemon_name>",
+			description: "Inspect a Pokemon in your Pokedex",
+			callback:    commandInspect,
+		},
 		"map": {
 			name:        "map",
 			description: "Display the next 20 location areas",
@@ -90,6 +95,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Display the previous 20 location areas",
 			callback:    commandMapBackward,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all of the Pokemon in your Pokedex",
+			callback:    commandPokedex,
 		},
 	}
 }
