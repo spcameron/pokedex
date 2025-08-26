@@ -6,7 +6,17 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetLocationAreaBatch(inputURL *string) (LocationAreaBatchResponse, error) {
+type LocationAreaBatch struct {
+	Count    int     `json:"count"`
+	Next     *string `json:"next"`
+	Previous *string `json:"previous"`
+	Results  []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"results"`
+}
+
+func (c *Client) GetLocationAreaBatch(inputURL *string) (LocationAreaBatch, error) {
 	url := baseURL + "/location-area"
 	if inputURL != nil {
 		url = *inputURL
@@ -14,10 +24,10 @@ func (c *Client) GetLocationAreaBatch(inputURL *string) (LocationAreaBatchRespon
 
 	cachedData, exists := c.cache.Get(url)
 	if exists {
-		result := LocationAreaBatchResponse{}
+		result := LocationAreaBatch{}
 		err := json.Unmarshal(cachedData, &result)
 		if err != nil {
-			return LocationAreaBatchResponse{}, err
+			return LocationAreaBatch{}, err
 		}
 
 		return result, nil
@@ -25,24 +35,24 @@ func (c *Client) GetLocationAreaBatch(inputURL *string) (LocationAreaBatchRespon
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return LocationAreaBatchResponse{}, err
+		return LocationAreaBatch{}, err
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return LocationAreaBatchResponse{}, err
+		return LocationAreaBatch{}, err
 	}
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return LocationAreaBatchResponse{}, err
+		return LocationAreaBatch{}, err
 	}
 
-	result := LocationAreaBatchResponse{}
+	result := LocationAreaBatch{}
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		return LocationAreaBatchResponse{}, err
+		return LocationAreaBatch{}, err
 	}
 
 	c.cache.Add(url, data)
