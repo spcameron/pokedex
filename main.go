@@ -1,17 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"time"
 
-type Client struct {
-	httpClient http.Client
-}
+	"github.com/spcameron/pokedex/internal/pokeapi"
+)
 
 func main() {
 	config := &config{
-		apiClient: Client{
-			httpClient: http.Client{},
-		},
-	}
+		apiClient: pokeapi.NewClient(5 * time.Minute)}
 
 	startREPL(config)
 }

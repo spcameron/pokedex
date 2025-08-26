@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/spcameron/pokedex/internal/pokeapi"
 )
 
 type config struct {
-	apiClient Client
+	apiClient pokeapi.Client
 	Next      *string
 	Previous  *string
 }
@@ -26,6 +28,10 @@ func startREPL(config *config) {
 		}
 
 		commandName := input[0]
+		arguments := []string{}
+		if len(input) > 1 {
+			arguments = input[1:]
+		}
 
 		command, exists := getCommands()[commandName]
 		if !exists {
@@ -33,7 +39,7 @@ func startREPL(config *config) {
 			continue
 		}
 
-		err := command.callback(config)
+		err := command.callback(config, arguments...)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -49,7 +55,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -58,6 +64,11 @@ func getCommands() map[string]cliCommand {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    commandExit,
+		},
+		"explore": {
+			name:        "explore",
+			description: "List all of the Pokemon in an area",
+			callback:    commandExplore,
 		},
 		"help": {
 			name:        "help",
