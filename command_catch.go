@@ -19,15 +19,13 @@ func commandCatch(config *config, arguments ...string) error {
 
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
 
-	baseExp := pokemon.BaseExperience
-	p := pokeapi.GetCatchProbability(baseExp)
+	p := pokeapi.GetCatchProbability(pokemon.BaseExperience)
 
-	if rand.Float64() < p {
-		fmt.Printf("%s was caught!\n", pokemon.Name)
-		config.Pokedex[pokemon.Name] = pokemon
-	} else {
+	if rand.Float64() > p {
 		fmt.Printf("%s escaped!\n", pokemon.Name)
 	}
 
+	fmt.Printf("%s was caught!\n", pokemon.Name)
+	config.Pokedex[pokemon.Name] = pokemon
 	return nil
 }
